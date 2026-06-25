@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chem Agent</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f4;
+        --panel: #ffffff;
+        --text: #1f2933;
+        --muted: #667085;
+        --line: #d7dde3;
+        --primary: #b63d36;
+        --primary-dark: #98312b;
+        --primary-soft: #f5d7d4;
+        --focus: #2563eb;
+        --success: #16784f;
+        --shadow: 0 18px 45px rgba(31, 41, 51, 0.1);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(246, 247, 244, 0.96)),
+          var(--bg);
+        color: var(--text);
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      .page {
+        width: min(1040px, calc(100% - 32px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 42px 0;
+        display: grid;
+        place-items: center;
+      }
+
+      .app {
+        width: 100%;
+        min-height: min(760px, calc(100vh - 84px));
+        padding: clamp(22px, 5vw, 58px);
+        border: 3px solid #202326;
+        border-radius: 32px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 34px;
+      }
+
+      .title {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 42px);
+        line-height: 1.12;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        max-width: 680px;
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.65;
+      }
+
+      .status {
+        flex: 0 0 auto;
+        min-width: 92px;
+        padding: 8px 12px;
+        border: 1px solid #cfd7df;
+        border-radius: 999px;
+        color: var(--success);
+        background: #eefbf4;
+        font-size: 14px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .form {
+        display: grid;
+        grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
+        gap: 22px 28px;
+        align-items: start;
+      }
+
+      label {
+        padding-top: 12px;
+        font-size: clamp(18px, 2.8vw, 28px);
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .field {
+        min-width: 0;
+      }
+
+      textarea,
+      input[type="url"] {
+        width: 100%;
+        border: 3px solid #202326;
+        border-radius: 14px;
+        color: var(--text);
+        background: #fff;
+        outline: none;
+        transition:
+          border-color 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      textarea {
+        min-height: 104px;
+        resize: vertical;
+        padding: 16px;
+        line-height: 1.6;
+      }
+
+      input[type="url"] {
+        height: 52px;
+        padding: 0 14px;
+      }
+
+      textarea:focus,
+      input[type="url"]:focus,
+      .file-picker:focus-within {
+        border-color: var(--focus);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+      }
+
+      .file-picker {
+        position: relative;
+        display: grid;
+        min-height: 96px;
+        padding: 16px;
+        border: 3px solid #202326;
+        border-radius: 14px;
+        background: #fff;
+        cursor: pointer;
+        transition:
+          border-color 160ms ease,
+          box-shadow 160ms ease,
+          background 160ms ease;
+      }
+
+      .file-picker:hover {
+        background: #fbfcfd;
+      }
+
+      .file-picker input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .file-main {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .file-sub {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .hint {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .actions {
+        grid-column: 2;
+        padding-top: 12px;
+      }
+
+      .run-button {
+        width: 100%;
+        min-height: 64px;
+        border: 3px solid var(--primary);
+        border-radius: 12px;
+        color: var(--primary-dark);
+        background: var(--primary-soft);
+        font-size: clamp(20px, 3vw, 30px);
+        font-weight: 800;
+        letter-spacing: 0;
+        cursor: pointer;
+        transition:
+          transform 140ms ease,
+          background 140ms ease,
+          box-shadow 140ms ease;
+      }
+
+      .run-button:hover {
+        background: #f0c4c0;
+        box-shadow: 0 12px 24px rgba(182, 61, 54, 0.16);
+        transform: translateY(-1px);
+      }
+
+      .run-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.68;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .result-shell {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
+        gap: 22px 28px;
+        align-items: start;
+        margin-top: 42px;
+      }
+
+      .result {
+        min-height: 230px;
+        max-height: 420px;
+        overflow: auto;
+        padding: 20px;
+        border: 3px solid #202326;
+        border-radius: 30px;
+        background: #fff;
+        white-space: pre-wrap;
+        line-height: 1.75;
+      }
+
+      .result.placeholder {
+        color: var(--muted);
+      }
+
+      .error {
+        color: #b42318;
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          width: min(100% - 20px, 1040px);
+          padding: 10px 0;
+        }
+
+        .app {
+          min-height: calc(100vh - 20px);
+          border-radius: 22px;
+          padding: 22px;
+        }
+
+        .header {
+          display: block;
+          margin-bottom: 26px;
+        }
+
+        .status {
+          display: inline-block;
+          margin-top: 16px;
+        }
+
+        .form,
+        .result-shell {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        label {
+          padding-top: 0;
+        }
+
+        .actions {
+          grid-column: 1;
+          padding-top: 16px;
+        }
+
+        .result-shell {
+          margin-top: 34px;
+        }
+
+        .result {
+          min-height: 220px;
+          border-radius: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="app" aria-labelledby="app-title">
+        <header class="header">
+          <div>
+            <h1 class="title" id="app-title">Chem Agent</h1>
+            <p class="subtitle">
+              输入任务指令并上传文献，页面会把内容发送给你的后端 agent，完成后在这里展示结果。
+            </p>
+          </div>
+          <div class="status" id="status">前端就绪</div>
+        </header>
+
+        <form class="form" id="agent-form">
+          <label for="instruction">输入指令：</label>
+          <div class="field">
+            <textarea
+              id="instruction"
+              name="instruction"
+              required
+              placeholder="例如：请根据上传文献提取实验流程，并生成可执行的工作站步骤。"
+            ></textarea>
+          </div>
+
+          <label for="paper">上传文献：</label>
+          <div class="field">
+            <label class="file-picker" for="paper">
+              <span class="file-main" id="file-name">选择 PDF、DOCX、TXT 或 JSON 文件</span>
+              <span class="file-sub">文件会随指令一起提交给后端处理。</span>
+              <input
+                id="paper"
+                name="paper"
+                type="file"
+                accept=".pdf,.doc,.docx,.txt,.md,.json"
+              />
+            </label>
+          </div>
+
+          <label for="api-url">后端地址：</label>
+          <div class="field">
+            <input
+              id="api-url"
+              name="api-url"
+              type="url"
+              placeholder="例如：https://your-agent-api.example.com/api/run-agent"
+            />
+            <p class="hint">先不填写也可以预览页面；填入后会真实请求后端 API。</p>
+          </div>
+
+          <div class="actions">
+            <button class="run-button" id="run-button" type="submit">开始执行</button>
+          </div>
+
+          <div class="result-shell">
+            <label for="result">结果展示：</label>
+            <output class="result placeholder" id="result" name="result">
+等待输入任务并点击开始执行。
+            </output>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script>
+      const form = document.querySelector("#agent-form");
+      const instructionInput = document.querySelector("#instruction");
+      const paperInput = document.querySelector("#paper");
+      const apiUrlInput = document.querySelector("#api-url");
+      const fileName = document.querySelector("#file-name");
+      const resultBox = document.querySelector("#result");
+      const runButton = document.querySelector("#run-button");
+      const statusText = document.querySelector("#status");
+
+      paperInput.addEventListener("change", () => {
+        const file = paperInput.files[0];
+        fileName.textContent = file ? file.name : "选择 PDF、DOCX、TXT 或 JSON 文件";
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const instruction = instructionInput.value.trim();
+        const apiUrl = apiUrlInput.value.trim();
+        const paper = paperInput.files[0];
+
+        if (!instruction) {
+          showResult("请先输入任务指令。", true);
+          instructionInput.focus();
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          if (!apiUrl) {
+            await wait(700);
+            showResult(buildMockResult(instruction, paper));
+            statusText.textContent = "模拟完成";
+            return;
+          }
+
+          const payload = new FormData();
+          payload.append("instruction", instruction);
+          if (paper) {
+            payload.append("paper", paper);
+          }
+
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            body: payload,
+          });
+
+          if (!response.ok) {
+            throw new Error(`后端请求失败：HTTP ${response.status}`);
+          }
+
+          const data = await response.json();
+          const result =
+            data.result ||
+            data.output ||
+            data.message ||
+            JSON.stringify(data, null, 2);
+
+          showResult(result);
+          statusText.textContent = "执行完成";
+        } catch (error) {
+          showResult(
+            `${error.message}\n\n请检查后端地址、CORS 设置，以及后端服务是否正在运行。`,
+            true,
+          );
+          statusText.textContent = "执行失败";
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      function setLoading(isLoading) {
+        runButton.disabled = isLoading;
+        runButton.textContent = isLoading ? "执行中..." : "开始执行";
+        statusText.textContent = isLoading ? "正在执行" : statusText.textContent;
+      }
+
+      function showResult(text, isError = false) {
+        resultBox.textContent = text;
+        resultBox.classList.remove("placeholder", "error");
+        if (isError) {
+          resultBox.classList.add("error");
+        }
+      }
+
+      function buildMockResult(instruction, paper) {
+        const fileLine = paper
+          ? `已选择文献：${paper.name}（${formatSize(paper.size)}）`
+          : "未上传文献。";
+
+        return [
+          "模拟执行结果",
+          "",
+          `任务指令：${instruction}`,
+          fileLine,
+          "",
+          "下一步接入后端后，这里会显示你的 agent 返回的真实内容。",
+          "建议后端接口返回 JSON，例如：",
+          '{ "result": "agent 输出内容" }',
+        ].join("\n");
+      }
+
+      function formatSize(bytes) {
+        if (bytes < 1024) {
+          return `${bytes} B`;
+        }
+        if (bytes < 1024 * 1024) {
+          return `${(bytes / 1024).toFixed(1)} KB`;
+        }
+        return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+      }
+
+      function wait(ms) {
+        return new Promise((resolve) => window.setTimeout(resolve, ms));
+      }
+    </script>
+  </body>
+</html>
