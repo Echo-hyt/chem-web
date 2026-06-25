@@ -117,7 +117,7 @@
       }
 
       textarea,
-      input[type="url"] {
+      input[type="password"] {
         width: 100%;
         border: 3px solid #202326;
         border-radius: 14px;
@@ -136,13 +136,13 @@
         line-height: 1.6;
       }
 
-      input[type="url"] {
+      input[type="password"] {
         height: 52px;
         padding: 0 14px;
       }
 
       textarea:focus,
-      input[type="url"]:focus,
+      input[type="password"]:focus,
       .file-picker:focus-within {
         border-color: var(--focus);
         box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
@@ -345,15 +345,16 @@
             </label>
           </div>
 
-          <label for="api-url">后端地址：</label>
+          <label for="access-code">访问码：</label>
           <div class="field">
             <input
-              id="api-url"
-              name="api-url"
-              type="url"
-              placeholder="例如：https://your-agent-api.example.com/api/run-agent"
+              id="access-code"
+              name="access-code"
+              type="password"
+              autocomplete="off"
+              placeholder="请输入管理员提供的访问码"
             />
-            <p class="hint">先不填写也可以预览页面；填入后会真实请求后端 API。</p>
+            <p class="hint">访问码只用于后端校验；没有配置后端时，页面会显示模拟结果。</p>
           </div>
 
           <div class="actions">
@@ -371,10 +372,12 @@
     </main>
 
     <script>
+      // 部署后端后，把这里改成 https://你的后端域名/api/run-agent
+      const API_URL = "";
       const form = document.querySelector("#agent-form");
       const instructionInput = document.querySelector("#instruction");
       const paperInput = document.querySelector("#paper");
-      const apiUrlInput = document.querySelector("#api-url");
+      const accessCodeInput = document.querySelector("#access-code");
       const fileName = document.querySelector("#file-name");
       const resultBox = document.querySelector("#result");
       const runButton = document.querySelector("#run-button");
@@ -389,7 +392,7 @@
         event.preventDefault();
 
         const instruction = instructionInput.value.trim();
-        const apiUrl = apiUrlInput.value.trim();
+        const accessCode = accessCodeInput.value.trim();
         const paper = paperInput.files[0];
 
         if (!instruction) {
@@ -401,10 +404,16 @@
         setLoading(true);
 
         try {
-          if (!apiUrl) {
+          if (!API_URL) {
             await wait(700);
             showResult(buildMockResult(instruction, paper));
             statusText.textContent = "模拟完成";
+            return;
+          }
+
+          if (!accessCode) {
+            showResult("请输入访问码。", true);
+            accessCodeInput.focus();
             return;
           }
 
@@ -414,8 +423,11 @@
             payload.append("paper", paper);
           }
 
-          const response = await fetch(apiUrl, {
+          const response = await fetch(API_URL, {
             method: "POST",
+            headers: {
+              "X-Access-Code": accessCode,
+            },
             body: payload,
           });
 
@@ -434,7 +446,7 @@
           statusText.textContent = "执行完成";
         } catch (error) {
           showResult(
-            `${error.message}\n\n请检查后端地址、CORS 设置，以及后端服务是否正在运行。`,
+            `${error.message}\n\n请检查访问码、CORS 设置，以及后端服务是否正在运行。`,
             true,
           );
           statusText.textContent = "执行失败";
@@ -468,7 +480,7 @@
           `任务指令：${instruction}`,
           fileLine,
           "",
-          "下一步接入后端后，这里会显示你的 agent 返回的真实内容。",
+          "下一步在代码里配置 API_URL 后，这里会显示你的 agent 返回的真实内容。",
           "建议后端接口返回 JSON，例如：",
           '{ "result": "agent 输出内容" }',
         ].join("\n");
