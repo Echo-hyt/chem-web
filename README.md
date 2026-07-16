@@ -1,50 +1,33 @@
-# Chem Web
+# Chem Agent Demo
 
-一个用于调用 Chem Agent 的最小前端页面。
+这是 Chem Agent 8 个联网测试案例的静态可视化 Demo，不依赖后端 API。
 
-## 使用方式
+页面展示：
 
-1. 打开 `index.html` 可以本地预览页面。
-2. 部署到 GitHub Pages 后，用户可以输入任务指令、上传文献，并输入访问码。
-3. 部署后端后，在 `index.html` 里配置：
+- 原始用户 Query；
+- 命中论文和匹配词；
+- Stage 路线；
+- Macro Plan；
+- Device 可行性结果；
+- 阻塞约束和离线 handoff；
+- Research 质量门错误。
 
-```js
-const API_URL = "https://你的后端域名/api/run-agent";
+数据来自 `chem-agent/campaigns/exact-online-suite-20260715/`。页面只读展示，不修改 Query，不调用 LLM，也不会向真实设备下发指令。
+
+## 本地预览
+
+```bash
+python3 -m http.server 8765
 ```
 
-4. 后端接口建议使用：
-
-```text
-POST /api/run-agent
-```
-
-请求使用 `multipart/form-data`：
-
-```text
-instruction: 用户输入的任务指令
-paper: 用户上传的文献文件
-```
-
-请求头：
-
-```text
-X-Access-Code: 管理员提供的访问码
-```
-
-返回 JSON：
-
-```json
-{
-  "result": "agent 输出内容"
-}
-```
+然后打开 <http://127.0.0.1:8765/>。
 
 ## GitHub Pages
 
-在 GitHub 仓库页面进入：
+在 GitHub 仓库中进入：
 
 ```text
-Settings -> Pages -> Build and deployment
+Settings → Pages → Build and deployment
 ```
 
 选择：
@@ -52,10 +35,10 @@ Settings -> Pages -> Build and deployment
 ```text
 Source: Deploy from a branch
 Branch: main
-Folder: /root
+Folder: / (root)
 ```
 
-保存后，页面地址通常是：
+页面地址通常是：
 
 ```text
 https://echo-hyt.github.io/chem-web/
