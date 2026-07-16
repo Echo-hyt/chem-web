@@ -1,98 +1,18 @@
 <!doctype html>
 <html lang="zh-CN">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Chem Agent · 8 个测试案例 Demo</title>
-    <style>
-      :root { color-scheme: light; --bg:#eef3f1; --panel:#fff; --ink:#18201e; --muted:#687571; --line:#d7e1dd; --teal:#087f70; --teal-soft:#dff2ed; --amber:#ad6705; --amber-soft:#fff0d0; --red:#b83b35; --red-soft:#fae4e1; --blue:#2f6477; --blue-soft:#e1eff3; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
-      * { box-sizing:border-box; }
-      body { margin:0; min-height:100vh; color:var(--ink); background:linear-gradient(160deg,#f7faf8,var(--bg)); }
-      button { font:inherit; }
-      .shell { display:grid; grid-template-columns:250px minmax(0,1fr); min-height:100vh; }
-      aside { padding:24px 16px; color:#eaf4f1; background:#18211f; }
-      .brand { display:flex; gap:10px; align-items:center; margin-bottom:28px; }
-      .brand-mark { display:grid; width:36px; height:36px; place-items:center; border:1px solid #47665f; border-radius:10px; background:#243431; font-size:20px; }
-      .brand strong,.brand span { display:block; } .brand strong { font-family:monospace; letter-spacing:.08em; } .brand span { margin-top:3px; color:#9bb0aa; font-size:12px; }
-      .side-title { display:flex; justify-content:space-between; margin:12px 6px 8px; color:#91a6a0; font:11px monospace; }
-      .case-list { display:grid; gap:6px; }
-      .case-button { display:flex; gap:10px; align-items:center; width:100%; padding:10px; color:#aebdb9; text-align:left; border:1px solid transparent; border-radius:8px; background:transparent; cursor:pointer; }
-      .case-button:hover,.case-button.active { color:#f3fbf8; background:#263632; border-color:#3c5750; }
-      .dot { width:8px; height:8px; flex:0 0 auto; border-radius:50%; background:#8ca09a; } .dot.success{background:#69c68c}.dot.warning{background:#efad50}.dot.danger{background:#e16b64}
-      .case-copy strong,.case-copy small { display:block; } .case-copy strong { font-size:13px; } .case-copy small { margin-top:3px; color:#71857e; font-size:10px; }
-      .side-note { margin-top:26px; padding:12px; color:#9bb0aa; font-size:11px; line-height:1.6; border:1px solid #30443e; border-radius:8px; background:#1e2b28; }
-      main { min-width:0; padding:28px clamp(18px,4vw,56px) 56px; }
-      .topbar { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; max-width:1180px; margin:0 auto 24px; }
-      h1 { margin:0; font-size:clamp(24px,3vw,36px); line-height:1.2; } .subtitle { margin:8px 0 0; color:var(--muted); line-height:1.6; }
-      .readonly { padding:7px 10px; color:var(--teal); font:11px monospace; border:1px solid #abd8ce; border-radius:999px; background:var(--teal-soft); white-space:nowrap; }
-      .content { max-width:1180px; margin:auto; }
-      .hero,.section { padding:22px; margin-bottom:16px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.88); box-shadow:0 10px 28px rgba(26,48,42,.05); }
-      .hero-grid { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:20px; align-items:start; } .eyebrow { color:#81908c; font:11px monospace; letter-spacing:.08em; text-transform:uppercase; }
-      .query { margin:10px 0 0; font-size:19px; line-height:1.65; } .status { padding:7px 10px; border-radius:999px; font-size:12px; white-space:nowrap; } .status.success{color:var(--teal);background:var(--teal-soft)} .status.warning{color:var(--amber);background:var(--amber-soft)} .status.danger{color:var(--red);background:var(--red-soft)}
-      .metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:1px; margin-top:20px; border:1px solid var(--line); background:var(--line); } .metric { padding:12px; background:#fbfdfc; } .metric span,.metric strong { display:block; } .metric span { color:var(--muted); font:10px monospace; } .metric strong { margin-top:6px; font-size:17px; }
-      .section-head { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:14px; } h2 { margin:3px 0 0; font-size:18px; } .count { color:var(--muted); font:11px monospace; }
-      .stage-route { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; } .stage { min-height:74px; padding:12px; border:1px solid var(--line); border-radius:9px; background:#f8fbfa; } .stage.active { border-color:#63b8aa; background:var(--teal-soft); } .stage small { display:block; color:var(--muted); font:10px monospace; } .stage strong { display:block; margin-top:7px; font-size:13px; line-height:1.45; }
-      .paper-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:10px; } .paper { padding:13px; border:1px solid var(--line); border-radius:9px; background:#fbfdfc; } .paper strong { display:block; line-height:1.45; } .paper small { display:block; margin-top:8px; color:var(--muted); line-height:1.5; }
-      .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:9px; } table { width:100%; min-width:700px; border-collapse:collapse; font-size:12px; } th,td { padding:10px 11px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); } th { color:var(--muted); font:10px monospace; background:#f3f8f6; } tr:last-child td { border-bottom:0; } td:first-child { color:var(--teal); font-family:monospace; white-space:nowrap; }
-      .notice { padding:14px; color:var(--muted); line-height:1.65; border-radius:9px; background:#f6faf8; } .notice.warning { color:#795016; background:var(--amber-soft); } .notice.danger { color:#873631; background:var(--red-soft); } .notice strong { color:inherit; }
-      .two-col { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; } ul { margin:8px 0 0; padding-left:20px; } li { margin:6px 0; line-height:1.5; }
-      details summary { cursor:pointer; color:var(--teal); font-size:13px; } pre { max-height:280px; overflow:auto; padding:12px; color:#33443f; font:11px/1.6 monospace; white-space:pre-wrap; background:#f4f8f6; border-radius:8px; }
-      @media (max-width:800px) { .shell{grid-template-columns:1fr}.shell aside{padding:16px}.case-list{grid-template-columns:repeat(4,minmax(0,1fr))}.case-button{justify-content:center}.case-copy small{display:none}.case-copy strong{font-size:12px}.topbar,.hero-grid{display:block}.readonly{display:inline-block;margin-top:14px}.metrics{grid-template-columns:repeat(3,1fr)}.two-col{grid-template-columns:1fr} }
-      @media (max-width:480px) { .case-list{grid-template-columns:repeat(2,1fr)} .metrics{grid-template-columns:repeat(2,1fr)} main{padding:18px 12px 36px}.hero,.section{padding:16px}.query{font-size:16px} }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f2f5f4" />
+    <meta
+      name="description"
+      content="ChemAgent research and device campaign control console"
+    />
+    <title>ChemAgent Console</title>
+    <script type="module" crossorigin src="/chem-web/assets/index-BA_fCbfx.js"></script>
+    <link rel="stylesheet" crossorigin href="/chem-web/assets/index-BG1Nq9XG.css">
   </head>
   <body>
-    <div class="shell">
-      <aside>
-        <div class="brand"><div class="brand-mark">⚗</div><div><strong>CHEM/AGENT</strong><span>8 个测试案例 Demo</span></div></div>
-        <div class="side-title"><span>READ-ONLY CASES</span><span id="case-count"></span></div>
-        <div id="case-list" class="case-list"></div>
-        <div class="side-note">这是静态展示页面。数据来自 Chem Agent 之前的 8 次联网测试，不会调用后端、修改 Query 或下发设备指令。</div>
-      </aside>
-      <main>
-        <div class="topbar"><div><h1>Chem Agent 实验规划结果</h1><p class="subtitle">浏览每个案例的原始 Query、论文命中、Stage、Macro Plan 与 Device 可行性结果。</p></div><span class="readonly">STATIC DEMO · NO API</span></div>
-        <div id="content" class="content"></div>
-      </main>
-    </div>
-    <script src="demo-data.js"></script>
-    <script>
-      const cases = window.CASES || [];
-      const byId = Object.fromEntries(cases.map(item => [item.id, item]));
-      const esc = value => String(value ?? "").replace(/[&<>\"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[char]));
-      const tone = status => status === "success" ? "success" : status === "manual_required" ? "warning" : status === "feasibility_error" ? "danger" : "";
-      const label = status => ({success:"设备映射通过",manual_required:"需要人工介入",feasibility_error:"设备不可行",completed:"Research 完成"}[status] || status);
-      const compact = value => String(value || "").length > 320 ? String(value).slice(0,320) + "…" : String(value || "");
-      function renderSidebar(selected) {
-        document.getElementById("case-count").textContent = cases.length;
-        document.getElementById("case-list").innerHTML = cases.map(item => `<button class="case-button ${item.id === selected ? "active" : ""}" data-case="${esc(item.id)}"><i class="dot ${tone(item.status)}"></i><span class="case-copy"><strong>${esc(item.id)}</strong><small>${esc(label(item.status))}</small></span></button>`).join("");
-        document.querySelectorAll("[data-case]").forEach(button => button.addEventListener("click", () => render(button.dataset.case)));
-      }
-      function render(id) {
-        const item = byId[id] || cases[0];
-        renderSidebar(item.id);
-        const device = item.device || {};
-        const constraints = device.blocking_constraints || [];
-        const papers = item.papers || [];
-        const macros = item.macro_plan || [];
-        const stageRows = item.stage_route.map((stage,index) => `<div class="stage ${stage === item.current_stage ? "active" : ""}"><small>STAGE ${String(index+1).padStart(2,"0")}</small><strong>${esc(stage)}</strong></div>`).join("");
-        const paperRows = papers.map(paper => `<article class="paper"><strong>${esc(paper.title)}</strong><small>匹配分数：${esc(paper.score)}<br>匹配词：${esc((paper.matched_terms || []).join(" · ") || "未记录")}</small></article>`).join("") || `<div class="notice">没有论文命中记录。</div>`;
-        const macroRows = macros.map((step,index) => `<tr><td>M${String(index+1).padStart(2,"0")}</td><td><strong>${esc(step["操作"] || "")}</strong></td><td>${esc(step["试剂/对象"] || "")}</td><td>${esc(step["参数"] || "")}</td><td>${esc(step["来源"] || "")}</td></tr>`).join("");
-        const macroSection = macroRows ? `<div class="table-wrap"><table><thead><tr><th>STEP</th><th>操作</th><th>试剂 / 对象</th><th>参数</th><th>来源</th></tr></thead><tbody>${macroRows}</tbody></table></div>` : `<div class="notice warning">当前 Macro Plan 为空，Research 质量门要求人工介入。</div>`;
-        const handoffRows = (device.offline_handoffs || []).map(handoff => `<li><strong>${esc(handoff.name || "离线步骤")}</strong>：${esc(handoff.sample || "待回传样品")}</li>`).join("") || "<li>无</li>";
-        const constraintSection = constraints.length ? `<div class="two-col" style="margin-top:12px"><div><div class="eyebrow">BLOCKING CONSTRAINTS</div><ul>${constraints.map(reason => `<li>${esc(reason)}</li>`).join("")}</ul></div><div><div class="eyebrow">OFFLINE HANDOFFS</div><ul>${handoffRows}</ul></div></div>` : "";
-        const deviceStatus = device.status === "success" ? "success" : device.status === "feasibility_error" ? "feasibility_error" : "";
-        const deviceLabel = device.status ? label(deviceStatus || device.status) : "未进入 Device";
-        const deviceMessage = device.message ? `<div class="notice ${constraints.length ? "danger" : "success"}"><strong>${esc(device.message)}</strong></div>` : `<div class="notice">该案例没有 Device Package，表示 Research 在质量门阶段停止。</div>`;
-        const errors = item.errors && item.errors.length ? `<details style="margin-top:14px"><summary>查看 Research 错误 / 人工接管原因</summary><pre>${esc(item.errors.join("\n"))}</pre></details>` : "";
-        document.getElementById("content").innerHTML = `
-          <section class="hero"><div class="hero-grid"><div><div class="eyebrow">ORIGINAL USER QUERY · ${esc(item.id)}</div><div class="query">${esc(item.query)}</div></div><span class="status ${tone(item.status)}">${esc(label(item.status))}</span></div><div class="metrics"><div class="metric"><span>RESEARCH</span><strong>${esc(item.research_status || "--")}</strong></div><div class="metric"><span>PAPERS</span><strong>${item.paper_count}</strong></div><div class="metric"><span>PROTOCOLS</span><strong>${item.protocol_count}</strong></div><div class="metric"><span>MACRO STEPS</span><strong>${macros.length}</strong></div><div class="metric"><span>DEVICE STEPS</span><strong>${device.steps || 0}</strong></div></div></section>
-          <section class="section"><div class="section-head"><div><div class="eyebrow">STAGE ROUTE</div><h2>实验阶段路线</h2></div><span class="count">${item.stage_route.length} STAGES</span></div><div class="stage-route">${stageRows}</div><details style="margin-top:14px"><summary>查看当前 Stage 计划</summary><p class="notice">${esc(item.current_stage_plan || "当前没有生成 Stage 计划")}</p></details></section>
-          <section class="section"><div class="section-head"><div><div class="eyebrow">LITERATURE EVIDENCE</div><h2>命中论文</h2></div><span class="count">${papers.length} / ${item.paper_count} DISPLAYED</span></div><div class="paper-grid">${paperRows}</div></section>
-          <section class="section"><div class="section-head"><div><div class="eyebrow">MACRO PLAN</div><h2>化学语义实验方案</h2></div><span class="count">${macros.length} STEPS</span></div>${macroSection}</section>
-          <section class="section"><div class="section-head"><div><div class="eyebrow">DEVICE VERDICT</div><h2>工作站可执行性</h2></div><span class="status ${tone(deviceStatus)}">${esc(deviceLabel)}</span></div>${deviceMessage}${constraintSection}</section>
-          <section class="section"><div class="section-head"><div><div class="eyebrow">TRACEABILITY</div><h2>原始运行说明</h2></div></div><div class="notice">此页面只抽取并展示 Chem Agent 原始产物，不修改用户 Query，也不把“agent 补全”伪装成论文证据。</div>${errors}</section>`;
-      }
-      render(cases[0] && cases[0].id);
-    </script>
+    <div id="root"></div>
   </body>
 </html>
