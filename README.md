@@ -13,7 +13,7 @@
 - Research 与 Device 原始输出；
 - 真实设备链路缺口、疑似遗漏已有设备能力和参数适配的独立复核结论。
 
-基础数据来自最新提交 `f4cabf337788b6d1b8395c779c5eae903e545ebf` 的八题评估。C01、C02、D01 已更新为 Research↔Device 闭环结果：Device 不可行反馈返回 Research B2 重新规划后，三个案例均最终生成 Device workflow 并返回 `success`。页面只读展示，不修改 Query，不调用 LLM，也不会向真实设备下发指令。
+八题基础数据统一来自最新提交 `f4cabf337788b6d1b8395c779c5eae903e545ebf` 的联网评估运行 `chem-agent-eval-20260719-170009`。C01、C02、D01 在此基础上更新为 Research↔Device 闭环结果：Device 不可行反馈返回 Research B2 重新规划后，三个案例均最终生成 Device workflow 并返回 `success`。闭环案例的论文证据仍继承各自原始联网运行，避免默认共享知识库污染。页面只读展示，不修改 Query，不调用 LLM，也不会向真实设备下发指令。
 
 闭环结果来源：
 
