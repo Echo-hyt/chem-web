@@ -1,6 +1,6 @@
 # Chem Agent Demo
 
-这是 Chem Agent 最新 `dll_main` 版本 8 个离线消融测试案例的静态可视化 Demo，不依赖后端 API。
+这是 Chem Agent 最新 `dll_main` 版本 8 个测试案例的静态可视化 Demo，不依赖后端 API。
 
 页面展示：
 
@@ -13,7 +13,14 @@
 - Research 与 Device 原始输出；
 - 真实设备链路缺口、疑似遗漏已有设备能力和参数适配的独立复核结论。
 
-数据来自最新提交 `f4cabf337788b6d1b8395c779c5eae903e545ebf` 的评估运行 `chem-agent-eval-20260719-032031`。本轮关闭联网论文搜索，用于离线知识库消融。页面只读展示，不修改 Query，不调用 LLM，也不会向真实设备下发指令。
+基础数据来自最新提交 `f4cabf337788b6d1b8395c779c5eae903e545ebf` 的八题评估。C01、C02、D01 已更新为 Research↔Device 闭环结果：Device 不可行反馈返回 Research B2 重新规划后，三个案例均最终生成 Device workflow 并返回 `success`。页面只读展示，不修改 Query，不调用 LLM，也不会向真实设备下发指令。
+
+闭环结果来源：
+
+```text
+chem-agent-dll-main-online-transfer-eval-20260719/
+result/device-retry-C01-C02-D01-20260719/closed-loop/
+```
 
 ## 本地预览
 
