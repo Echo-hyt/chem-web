@@ -11,10 +11,42 @@ BASE = ROOT / "result/chem-agent-eval-20260719-170009"
 LOOP = ROOT / "result/device-retry-C01-C02-D01-20260719/closed-loop"
 FINAL_ITERATION = {"C01": 1, "C02": 3, "D01": 1}
 CASES = ["A01", "A02", "B01", "B02", "C01", "C02", "D01", "D02"]
+CURATED_PAPERS = Path(
+    "/Users/yutinghuang/Documents/agent code/chem-agent/result/"
+    "literature-only-20260719-221307/curated_papers.json"
+)
 
 
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def curated_knowledge_hits(case: str) -> list[dict]:
+    papers = load(CURATED_PAPERS)[case]["selected_papers"]
+    hits = []
+    for paper in papers:
+        publication = " · ".join(
+            item for item in [paper.get("venue"), paper.get("year")] if item
+        )
+        identifier = paper.get("doi") or paper.get("url") or ""
+        summary = paper.get("abstract") or "与该案例的催化体系、目标反应或研究变量直接相关。"
+        hits.append({
+            "title": paper["title"],
+            "file_path": paper.get("url") or (f"https://doi.org/{identifier}" if identifier else ""),
+            "score": 1.0,
+            "problem": summary,
+            "synthesis_summary": summary,
+            "experiment_details": "；".join(item for item in [publication, identifier] if item),
+            "steps": [],
+            "performance": [],
+            "matched_terms": [item for item in [paper.get("source"), publication, identifier] if item],
+            "doi": paper.get("doi") or "",
+            "year": paper.get("year") or "",
+            "venue": paper.get("venue") or "",
+            "authors": paper.get("authors") or [],
+            "url": paper.get("url") or "",
+        })
+    return hits
 
 
 def restore_evidence_provenance(value, original_research: dict):
@@ -110,6 +142,9 @@ def build_case(case: str) -> dict:
             "device_attempts": summary.get("device_attempts") or [],
         }]
         closed_loop = False
+    # Literature-only rerun on 2026-07-19: replace only the visible evidence
+    # hits. Research plans and Device workflows remain byte-for-byte unchanged.
+    research["knowledge_hits"] = curated_knowledge_hits(case)
     device["evaluation"] = {
         "process_completion": "yes",
         "paper_quality_summary": "low",
